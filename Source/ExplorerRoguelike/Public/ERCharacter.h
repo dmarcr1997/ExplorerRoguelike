@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "HAL/MallocBinned2.h"
 #include "ERCharacter.generated.h"
 
 
@@ -49,6 +50,8 @@ protected:
 	UInputAction* LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* JumpAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* PrimaryAttackAction;
 
 	// PARAMS
 	UPROPERTY(EditAnywhere, Category="Movement")
@@ -59,12 +62,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Camera")
 	float LookSensitivity = 1.0f;
-	
-	
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	TSubclassOf<AActor> ProjectileClass;
 
 private:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void StartJump(const FInputActionValue& Value);
-	void StopJump(const FInputActionValue& Value);
+	void StartJump();
+	void StopJump();
+	void PrimaryAttack();
 };

@@ -66,8 +66,8 @@ void AERCharacter::Move(const FInputActionValue& Value)
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRot(0, Rotation.Yaw, 0);
 
-		const FVector ForwardDirection = FRotationMatrix(YawRot).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
+		const FVector ForwardDirection = FRotationMatrix(YawRot).GetUnitAxis(EAxis::X); //Forward Vector
+		const FVector RightDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y); //Right Vector
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -84,15 +84,25 @@ void AERCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AERCharacter::StartJump(const FInputActionValue& Value)
+void AERCharacter::StartJump()
 {
 	Jump();
 }
 
-void AERCharacter::StopJump(const FInputActionValue& Value)
+void AERCharacter::StopJump()
 {
 	StopJumping();
 }
+
+void AERCharacter::PrimaryAttack()
+{
+	FVector SpawnPoint = GetMesh()->GetSocketLocation("Muzzle_01");
+	FTransform SpawnTM = FTransform(GetControlRotation(), SpawnPoint);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
 
 // Called every frame
 void AERCharacter::Tick(float DeltaTime)
@@ -111,6 +121,7 @@ void AERCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AERCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AERCharacter::StartJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AERCharacter::StopJump);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AERCharacter::PrimaryAttack);
 		
 		
 	}
