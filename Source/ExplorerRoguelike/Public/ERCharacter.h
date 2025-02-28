@@ -14,6 +14,8 @@ class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class UERInteractionComponent;
+class UAnimMontage;
 
 UCLASS()
 class EXPLORERROGUELIKE_API AERCharacter : public ACharacter
@@ -52,6 +54,8 @@ protected:
 	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* PrimaryAttackAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* InteractionAction;
 
 	// PARAMS
 	UPROPERTY(EditAnywhere, Category="Movement")
@@ -66,10 +70,20 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Combat")
 	TSubclassOf<AActor> ProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category="Interaction")
+	UERInteractionComponent* InteractionComp;
+
+	// ANIMATION PARAMS
+	UPROPERTY(EditAnywhere, Category="Attack")
+	UAnimMontage* AttackAnim;
+	
 private:
+	FTimerHandle TimerHandle_PrimaryAttack;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void StartJump();
 	void StopJump();
 	void PrimaryAttack();
+	void PrimaryInteract();
+	void PrimaryAttack_TimeElapsed();
 };

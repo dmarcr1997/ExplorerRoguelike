@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ERInteractionComponent.h"
 
 // Sets default values
 AERCharacter::AERCharacter()
@@ -39,6 +40,9 @@ AERCharacter::AERCharacter()
 
 	// Camera Config
 	CameraComp->bUsePawnControlRotation = false;
+
+	//Interaction component
+	InteractionComp = CreateDefaultSubobject<UERInteractionComponent>("InteractionComponent");
 }
 
 // Called when the game starts or when spawned
@@ -96,6 +100,18 @@ void AERCharacter::StopJump()
 
 void AERCharacter::PrimaryAttack()
 {
+	PlayAnimMontage(AttackAnim);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AERCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	
+}
+
+void AERCharacter::PrimaryInteract()
+{
+	InteractionComp->primaryInteract();
+}
+
+void AERCharacter::PrimaryAttack_TimeElapsed()
+{
 	FVector SpawnPoint = GetMesh()->GetSocketLocation("Muzzle_01");
 	FTransform SpawnTM = FTransform(GetControlRotation(), SpawnPoint);
 	FActorSpawnParameters SpawnParams;
@@ -122,7 +138,7 @@ void AERCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AERCharacter::StartJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AERCharacter::StopJump);
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AERCharacter::PrimaryAttack);
-		
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AERCharacter::PrimaryInteract);
 		
 	}
 
