@@ -23,7 +23,7 @@ class EXPLORERROGUELIKE_API IERGameplayInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	UFUNCTION(BlueprintNativeEvent) // Code allows for blueprint/C++ implementation
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent) // Code allows for blueprint/C++ implementation
 	void Interact(APawn* InstigatingPawn);
 	
 };
