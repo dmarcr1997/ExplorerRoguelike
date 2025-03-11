@@ -4,6 +4,7 @@
 #include "ERExplosiveBarrel.h"
 
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AERExplosiveBarrel::AERExplosiveBarrel()
@@ -17,10 +18,12 @@ AERExplosiveBarrel::AERExplosiveBarrel()
 
 	RadialForce = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForce"));
 	RadialForce->SetupAttachment(BarrelMesh);
+	RadialForce->SetAutoActivate(false);
 	RadialForce->ImpulseStrength = 2000.0f;
 	RadialForce->bImpulseVelChange = true;
 	RadialForce->ForceStrength = 10.0f;
 	RadialForce->Radius = 695.0f;
+	RadialForce->AddCollisionChannelToAffect(ECC_WorldDynamic);
 	BarrelMesh->OnComponentHit.AddDynamic(this, &AERExplosiveBarrel::FireExplosion);
 }
 
@@ -41,6 +44,11 @@ void AERExplosiveBarrel::Tick(float DeltaTime)
 void AERExplosiveBarrel::FireExplosion(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& HitResult)
 {
 	RadialForce->FireImpulse();
+
+// 	UE_LOG(LogTemp, Log, TEXT("EXPLODING"));
+// 	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s"), *GetNameSafe(OtherActor));
+// 	FString CombineString = FString::Printf(TEXT("Hit at location: %s"), *HitResult.ImpactPoint.ToString());
+// 	DrawDebugString(GetWorld(), HitResult.ImpactPoint, CombineString, nullptr, FColor::Green, 2.0f, true);
 }
 
 
