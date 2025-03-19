@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "ERInteractionComponent.h"
+#include "ERProjectileBase.h"
 
 // Sets default values
 AERCharacter::AERCharacter()
@@ -102,7 +103,12 @@ void AERCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AERCharacter::PrimaryAttack_TimeElapsed, 0.2f);
-	
+}
+
+void AERCharacter::SecondaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &AERCharacter::SecondaryAttack_TimeElapsed, 0.2f);
 }
 
 void AERCharacter::PrimaryInteract()
@@ -110,14 +116,41 @@ void AERCharacter::PrimaryInteract()
 	InteractionComp->primaryInteract();
 }
 
+void AERCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileType)
+{
+	if (ensure(ProjectileType)){
+		FVector SpawnPoint = GetMesh()->GetSocketLocation("Muzzle_01");
+		FTransform SpawnTM;
+		FHitResult HitResult;
+		FVector EndLocation = SpawnPoint + FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X) * 100.f;
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+		bool bHit = GetWorld()->LineTraceSingleByObjectType(HitResult, SpawnPoint, EndLocation, ObjectQueryParams);
+		if (bHit)
+		{
+			FVector Direction = (SpawnPoint - HitResult.ImpactPoint).GetSafeNormal();
+			FRotator SpawnRotation =  FRotationMatrix::MakeFromX(Direction).Rotator(); //make rot from x
+			SpawnTM = FTransform(SpawnRotation, SpawnPoint);
+		} else
+		{
+			SpawnTM = FTransform(GetControlRotation(), SpawnPoint);
+		}
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
+		GetWorld()->SpawnActor<AActor>(ProjectileType, SpawnTM, SpawnParams);
+	}
+}
+
 void AERCharacter::PrimaryAttack_TimeElapsed()
 {
-	FVector SpawnPoint = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTM = FTransform(GetControlRotation(), SpawnPoint);
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	SpawnProjectile(ProjectileClass);
+}
+
+void AERCharacter::SecondaryAttack_TimeElapsed()
+{
+	SpawnProjectile(SecondaryProjectileClass);
 }
 
 
@@ -139,6 +172,8 @@ void AERCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AERCharacter::StartJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AERCharacter::StopJump);
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AERCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(SecondaryAttackAction, ETriggerEvent::Started, this, &AERCharacter::SecondaryAttack);
+		
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AERCharacter::PrimaryInteract);
 		
 	}

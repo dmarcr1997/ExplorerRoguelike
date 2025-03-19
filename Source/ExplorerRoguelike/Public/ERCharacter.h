@@ -9,6 +9,7 @@
 
 
 // FORWARD DECS
+class AERProjectileBase;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputMappingContext;
@@ -55,6 +56,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* PrimaryAttackAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* SecondaryAttackAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* InteractionAction;
 
 	// PARAMS
@@ -70,6 +73,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Combat")
 	TSubclassOf<AActor> ProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category="Combat")
+	TSubclassOf<AActor> SecondaryProjectileClass;
+
+	
 	UPROPERTY(EditAnywhere, Category="Interaction")
 	UERInteractionComponent* InteractionComp;
 
@@ -79,11 +86,16 @@ protected:
 	
 private:
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_SecondaryAttack;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void StartJump();
 	void StopJump();
 	void PrimaryAttack();
+	void SecondaryAttack();
 	void PrimaryInteract();
+	void SpawnProjectile(TSubclassOf<AActor> ProjectileType);
 	void PrimaryAttack_TimeElapsed();
+	void SecondaryAttack_TimeElapsed();
+	
 };
