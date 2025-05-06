@@ -15,6 +15,8 @@ AERProjectileBase::AERProjectileBase()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	
 	RootComponent = SphereComp;
 
 	ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComp");
@@ -27,7 +29,10 @@ AERProjectileBase::AERProjectileBase()
 void AERProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (GetInstigator())
+	{
+		SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	}
 }
 
 // Called every frame

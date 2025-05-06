@@ -9,6 +9,7 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
+class UParticleSystem;
 UCLASS()
 class EXPLORERROGUELIKE_API AERProjectileBase : public AActor
 {
@@ -27,6 +28,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	UParticleSystemComponent* ParticleComp;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UParticleSystem* HitParticle;
 	
 	virtual void BeginPlay() override;
 

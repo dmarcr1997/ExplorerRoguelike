@@ -5,6 +5,7 @@
 
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "DrawDebugHelpers.h"
+#include "ERAttributeComponent.h"
 
 // Sets default values
 AERExplosiveBarrel::AERExplosiveBarrel()
@@ -44,7 +45,8 @@ void AERExplosiveBarrel::Tick(float DeltaTime)
 void AERExplosiveBarrel::FireExplosion(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& HitResult)
 {
 	RadialForce->FireImpulse();
-
+	UERAttributeComponent* AttributeComp = OtherActor->GetComponentByClass<UERAttributeComponent>();
+	if (AttributeComp != nullptr) AttributeComp->ApplyHealthChange(-50);
 // 	UE_LOG(LogTemp, Log, TEXT("EXPLODING"));
 // 	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s"), *GetNameSafe(OtherActor));
 // 	FString CombineString = FString::Printf(TEXT("Hit at location: %s"), *HitResult.ImpactPoint.ToString());

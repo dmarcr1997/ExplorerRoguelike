@@ -16,6 +16,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class UERInteractionComponent;
+class UERAttributeComponent;
 class UAnimMontage;
 
 UCLASS()
@@ -58,6 +59,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* SecondaryAttackAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* TeleportAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
 	UInputAction* InteractionAction;
 
 	// PARAMS
@@ -76,9 +79,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Combat")
 	TSubclassOf<AActor> SecondaryProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category="Combat")
+	TSubclassOf<AActor> TeleportProjectileClass;
+
 	
-	UPROPERTY(EditAnywhere, Category="Interaction")
+	UPROPERTY(EditAnywhere, Category="Components")
 	UERInteractionComponent* InteractionComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
+	UERAttributeComponent* AttributeComp;
 
 	// ANIMATION PARAMS
 	UPROPERTY(EditAnywhere, Category="Attack")
@@ -87,15 +96,17 @@ protected:
 private:
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_SecondaryAttack;
+	FTimerHandle TimerHandle_Teleport;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void StartJump();
 	void StopJump();
 	void PrimaryAttack();
 	void SecondaryAttack();
+	void Teleport();
 	void PrimaryInteract();
 	void SpawnProjectile(TSubclassOf<AActor> ProjectileType);
 	void PrimaryAttack_TimeElapsed();
 	void SecondaryAttack_TimeElapsed();
-	
+	void Teleport_TimeElapsed();
 };

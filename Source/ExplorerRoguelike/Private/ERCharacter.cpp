@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "ERAttributeComponent.h"
 #include "ERInteractionComponent.h"
 #include "ERProjectileBase.h"
 
@@ -44,6 +45,9 @@ AERCharacter::AERCharacter()
 
 	//Interaction component
 	InteractionComp = CreateDefaultSubobject<UERInteractionComponent>("InteractionComponent");
+
+	//Attribute component
+	AttributeComp = CreateDefaultSubobject<UERAttributeComponent>("AttributeComponent");
 }
 
 // Called when the game starts or when spawned
@@ -111,6 +115,12 @@ void AERCharacter::SecondaryAttack()
 	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &AERCharacter::SecondaryAttack_TimeElapsed, 0.2f);
 }
 
+void AERCharacter::Teleport()
+{
+	PlayAnimMontage(AttackAnim);
+	GetWorldTimerManager().SetTimer(TimerHandle_Teleport, this, &AERCharacter::Teleport_TimeElapsed, 0.2f);
+}
+
 void AERCharacter::PrimaryInteract()
 {
 	InteractionComp->primaryInteract();
@@ -153,6 +163,11 @@ void AERCharacter::SecondaryAttack_TimeElapsed()
 	SpawnProjectile(SecondaryProjectileClass);
 }
 
+void AERCharacter::Teleport_TimeElapsed()
+{
+	SpawnProjectile(TeleportProjectileClass);
+}
+
 
 // Called every frame
 void AERCharacter::Tick(float DeltaTime)
@@ -175,7 +190,7 @@ void AERCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(SecondaryAttackAction, ETriggerEvent::Started, this, &AERCharacter::SecondaryAttack);
 		
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AERCharacter::PrimaryInteract);
-		
+		EnhancedInputComponent->BindAction(TeleportAction, ETriggerEvent::Started, this, &AERCharacter::Teleport);
 	}
 
 }
