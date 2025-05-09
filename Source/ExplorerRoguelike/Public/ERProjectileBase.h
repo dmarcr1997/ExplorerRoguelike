@@ -10,7 +10,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 class UParticleSystem;
-UCLASS()
+UCLASS(Abstract)
 class EXPLORERROGUELIKE_API AERProjectileBase : public AActor
 {
 	GENERATED_BODY()
@@ -20,21 +20,23 @@ public:
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	USphereComponent* SphereComp;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	UProjectileMovementComponent* ProjectileMovement;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	UParticleSystemComponent* ParticleComp;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Effects")
 	UParticleSystem* HitParticle;
 	
-	virtual void BeginPlay() override;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
+	USphereComponent* SphereComp;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
+	UProjectileMovementComponent* ProjectileMovement;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
+	UParticleSystemComponent* ParticleComp;
+
+	UFUNCTION()
+	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Explode();
+
+	virtual void PostInitializeComponents() override;
 };

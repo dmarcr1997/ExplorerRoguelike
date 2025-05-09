@@ -5,40 +5,48 @@
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "UObject/FastReferenceCollector.h"
 
 // Sets default values
 AERProjectileBase::AERProjectileBase()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
-	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
-	
+	SphereComp->OnComponentHit.AddDynamic(this, &AERProjectileBase::OnActorHit);
 	RootComponent = SphereComp;
 
 	ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComp");
 	ParticleComp->SetupAttachment(RootComponent);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->bInitialVelocityInLocalSpace = true;
+	ProjectileMovement->ProjectileGravityScale = 0.0f;
+	ProjectileMovement->InitialSpeed = 8000;
 }
 
-// Called when the game starts or when spawned
-void AERProjectileBase::BeginPlay()
+void AERProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::BeginPlay();
+	Explode();
+}
+
+void AERProjectileBase::Explode_Implementation()
+{
+	if (ensure(!IsPendingKillPending()))
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticle, GetActorLocation(), GetActorRotation());
+		Destroy();
+	}
+}
+
+void AERProjectileBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 	if (GetInstigator())
 	{
 		SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 	}
 }
-
-// Called every frame
-void AERProjectileBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

@@ -24,6 +24,9 @@ protected:
 	//HealthMax, Stamina, Strength
 
 public:
+	UFUNCTION(BlueprintCallable)
+	bool isAlive() const;
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 	

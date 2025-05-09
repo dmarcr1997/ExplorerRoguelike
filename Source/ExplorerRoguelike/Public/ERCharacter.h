@@ -92,7 +92,11 @@ protected:
 	// ANIMATION PARAMS
 	UPROPERTY(EditAnywhere, Category="Attack")
 	UAnimMontage* AttackAnim;
-	
+
+	UFUNCTION()
+	void OnHealthChange(AActor* InstigatorActor, UERAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	virtual void PostInitializeComponents() override;
 private:
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_SecondaryAttack;

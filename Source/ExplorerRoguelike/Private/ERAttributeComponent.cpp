@@ -10,6 +10,11 @@ UERAttributeComponent::UERAttributeComponent()
 	Health = 100;
 }
 
+bool UERAttributeComponent::isAlive() const
+{
+	return Health > 0;
+}
+
 bool UERAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;

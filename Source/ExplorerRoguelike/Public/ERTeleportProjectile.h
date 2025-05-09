@@ -17,16 +17,18 @@ public:
 	AERTeleportProjectile();
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, Category="Teleport")
+	float TeleportDelay;
+
+	UPROPERTY(EditDefaultsOnly, Category="Teleport")
+	float DetonateDelay;
+	
+	FTimerHandle TimerHandle_Delayed_Explode;	
+
+	virtual void Explode_Implementation() override;
+
+	void TeleportInstigator();
 	
 	virtual void BeginPlay() override;
-
-	FTimerHandle TimerHandle_Explode;
-	void Explode_TimeElapsed();
-
-	UFUNCTION(BlueprintCallable)
-	void Explode();
-
-	UFUNCTION()
-	void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 };
