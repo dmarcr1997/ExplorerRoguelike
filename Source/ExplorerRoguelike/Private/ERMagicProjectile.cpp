@@ -21,7 +21,7 @@ void AERMagicProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* O
 		UERAttributeComponent* AttributeComp = Cast<UERAttributeComponent>(OtherActor->GetComponentByClass(UERAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(-20);
+			AttributeComp->ApplyHealthChange(DamageAmount);
 		}
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		Destroy();

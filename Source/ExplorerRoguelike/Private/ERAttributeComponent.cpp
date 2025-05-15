@@ -7,7 +7,7 @@
 UERAttributeComponent::UERAttributeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	Health = 100;
+	Health = MaxHealth;
 }
 
 bool UERAttributeComponent::isAlive() const
@@ -18,7 +18,7 @@ bool UERAttributeComponent::isAlive() const
 bool UERAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
-
+	Health = FMath::Clamp(Health, 0, MaxHealth);
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 	
 	return true;

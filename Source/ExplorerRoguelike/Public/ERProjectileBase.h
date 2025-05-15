@@ -40,7 +40,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
 	UAudioComponent* AudioComp;
 
-
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Damage")
+	float DamageAmount = -20;
+	
 	UFUNCTION()
 	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
