@@ -10,6 +10,8 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 class UParticleSystem;
+class UAudioComponent;
+class USoundBase;
 UCLASS(Abstract)
 class EXPLORERROGUELIKE_API AERProjectileBase : public AActor
 {
@@ -23,6 +25,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Effects")
 	UParticleSystem* HitParticle;
 	
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Effects")
+	USoundBase* ImpactSound;
+	
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
 	USphereComponent* SphereComp;
 
@@ -31,6 +36,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
 	UParticleSystemComponent* ParticleComp;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Components")
+	UAudioComponent* AudioComp;
+
 
 	UFUNCTION()
 	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

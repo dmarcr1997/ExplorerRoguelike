@@ -3,6 +3,7 @@
 
 #include "ERProjectileBase.h"
 
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,6 +26,11 @@ AERProjectileBase::AERProjectileBase()
 	ProjectileMovement->bInitialVelocityInLocalSpace = true;
 	ProjectileMovement->ProjectileGravityScale = 0.0f;
 	ProjectileMovement->InitialSpeed = 8000;
+
+	AudioComp = CreateDefaultSubobject<UAudioComponent>("AudioComp");
+	AudioComp->SetupAttachment(RootComponent);
+	AudioComp->bAutoActivate = true;
+	
 }
 
 void AERProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
@@ -38,6 +44,7 @@ void AERProjectileBase::Explode_Implementation()
 	if (ensure(!IsPendingKillPending()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticle, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		Destroy();
 	}
 }
@@ -45,6 +52,7 @@ void AERProjectileBase::Explode_Implementation()
 void AERProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 	if (GetInstigator())
 	{
 		SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);

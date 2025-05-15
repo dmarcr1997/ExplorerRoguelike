@@ -17,16 +17,14 @@ void AERMagicProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* O
 {
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		UE_LOG(LogTemp, Display, TEXT("OnActorHit"));
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, GetActorLocation(), GetActorRotation());
 		UERAttributeComponent* AttributeComp = Cast<UERAttributeComponent>(OtherActor->GetComponentByClass(UERAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
 			AttributeComp->ApplyHealthChange(-20);
 		}
-		UE_LOG(LogTemp, Display, TEXT("DESTROY"));
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		Destroy();
 	}
-	UE_LOG(LogTemp, Display, TEXT("OnActorHit Didn't do it.."));
 }
 

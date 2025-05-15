@@ -76,10 +76,13 @@ void AERCharacter::BeginPlay()
 void AERCharacter::OnHealthChange(AActor* InstigatorActor, UERAttributeComponent* OwningComp, float NewHealth,
 	float Delta)
 {
-	if (NewHealth <= 0.0f && Delta <= 0.0f)
+	if (Delta <= 0.0f)
 	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		DisableInput(PlayerController);
+		GetMesh()->SetScalarParameterValueOnMaterials(TEXT("TimeToHit"), GetWorld()->GetTimeSeconds());
+		if (NewHealth <= 0.0f){
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			DisableInput(PlayerController);
+		}
 	}
 }
 
